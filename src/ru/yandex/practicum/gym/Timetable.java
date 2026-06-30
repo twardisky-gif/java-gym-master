@@ -39,4 +39,28 @@ public class Timetable {
 
         return sessionsByTime.getOrDefault(timeOfDay, new ArrayList<>());
     }
+
+    public List<CoachTrainingCount> getCountByCoaches() {
+        HashMap<Coach, Integer> trainings = new HashMap<>();
+
+        for (TreeMap<TimeOfDay, List<TrainingSession>> day : timetable.values()) {
+            for (Map.Entry<TimeOfDay, List<TrainingSession>> entry : day.entrySet()) {
+                for (TrainingSession trainingSession : entry.getValue()) {
+                    Coach coach = trainingSession.getCoach();
+                    int currentCount = trainings.getOrDefault(coach, 0);
+                    trainings.put(coach, currentCount + 1);
+                }
+            }
+        }
+
+        ArrayList<CoachTrainingCount> coachTrainingCount = new ArrayList<>();
+        for (Map.Entry<Coach, Integer> entry : trainings.entrySet()) {
+            Coach coach = entry.getKey();
+            Integer count = entry.getValue();
+            coachTrainingCount.add(new CoachTrainingCount(coach, count));
+        }
+
+        Collections.sort(coachTrainingCount);
+        return coachTrainingCount;
+    }
 }
